@@ -1,3 +1,4 @@
+using EMS.BaseLibrary.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EMS.Server.Controllers

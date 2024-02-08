@@ -1,4 +1,4 @@
-namespace EMS.Server
+namespace EMS.BaseLibrary.DTOs
 {
 	public class WeatherForecast
 	{
