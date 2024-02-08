@@ -67,16 +67,52 @@ namespace EMS.ServerLibrary.Repositories.Implementations
 			if (!BCrypt.Net.BCrypt.Verify(user.Password, appUser.Password))
 				return new LoginResponse(false, "Email/Password not valid");
 
-			var getuserRole = await context.UserRoles.FirstOrDefaultAsync(_ => _.UserId == appUser.Id);
+			var getuserRole = await FindUserRole(appUser.Id);
 			if (getuserRole is null) return new LoginResponse(false, "user role is not found");
 
-			var getRoleName = await context.SystemRoles.FirstOrDefaultAsync(_ => _.Id == getuserRole.RoleId);
+			var getRoleName = await FindRoleName(getuserRole.RoleId);
 			if (getRoleName is null) return new LoginResponse(false, "user role not found");
 
 			string jwtToken = GenerateToken(appUser, getRoleName!.Name);
 			string refreshToken = GenerateRefreshToken();
+
+			//Save refresh token to the database
+			var findUser = await context.RefreshTokenInfos.FirstOrDefaultAsync(_ => _.UserId == appUser.Id);
+			if(findUser is not null)
+			{
+				findUser!.Token = refreshToken;
+				await context.SaveChangesAsync();
+			}
+			else
+			{
+				await AddToDatabase(new RefreshTokenInfo() { Token = refreshToken, UserId = appUser.Id });
+			}
+
 			var data = new LoginResponse(true, "Login Successful", jwtToken, refreshToken);
 			return data;
+		}
+
+		public async Task<LoginResponse> RefreshTokenAsync(RefreshToken token)
+		{
+			if (token is null) return new LoginResponse(false, "Model is empty");
+			var findToken = await context.RefreshTokenInfos.FirstOrDefaultAsync(_ => _.Token!.Equals(token.Token));
+			if (findToken is null) return new LoginResponse(false, "Refresh Token is required");
+			//get user details
+			var user = await context.ApplicationUsers.FirstOrDefaultAsync(_ => _.Id == findToken.UserId);
+			if (user is null) return new LoginResponse(false, "Refresh token could not be generated because user not found");
+
+			var userRole = await FindUserRole(user.Id);
+			var roleName = await FindRoleName(userRole.RoleId);
+			string jwtToken = GenerateToken(user, roleName.Name!);
+			string refreshToken = GenerateRefreshToken();
+
+			var updateRefreshToken = await context.RefreshTokenInfos.FirstOrDefaultAsync(_ => _.UserId == user.Id);
+			if (updateRefreshToken is null) return new LoginResponse(false, "Refresh token cold not be generated because user has not signed in");
+
+			updateRefreshToken.Token = refreshToken;
+			await context.SaveChangesAsync();
+			return new LoginResponse(true, "Token refreshed successfully", jwtToken, refreshToken);
+
 		}
 
 		private string GenerateToken(ApplicationUser appUser, string? role)
@@ -99,6 +135,9 @@ namespace EMS.ServerLibrary.Repositories.Implementations
 				);
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
+
+		private async Task<UserRole> FindUserRole(int userId) => await context.UserRoles.FirstOrDefaultAsync(_ => _.UserId == userId);
+		private async Task<SystemRole> FindRoleName(int roleId) => await context.SystemRoles.FirstOrDefaultAsync(_ => _.Id == roleId);
 
 		private static string GenerateRefreshToken() => Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
