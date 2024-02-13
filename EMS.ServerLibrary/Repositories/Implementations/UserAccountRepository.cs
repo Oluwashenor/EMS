@@ -130,7 +130,7 @@ namespace EMS.ServerLibrary.Repositories.Implementations
 				issuer: jwtConfig.Value.Issuer,
 				audience: jwtConfig.Value.Audience,
 				claims: userClaims,
-				expires:DateTime.Now.AddDays(1),
+				expires:DateTime.Now.AddSeconds(5),
 				signingCredentials:credentials
 				);
 			return new JwtSecurityTokenHandler().WriteToken(token);

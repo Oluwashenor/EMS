@@ -1,4 +1,6 @@
-﻿@inherits LayoutComponentBase
+﻿@using EMS.BaseLibrary.DTOs
+@using EMS.ClientLibrary.Helpers
+@inherits LayoutComponentBase
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -6,11 +8,25 @@
 
     <main>
         <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <AuthorizeView>
+                <Authorized>
+                    <a class="btn btn-none text-danger" @onclick="LogoutClicked" href="identity/account/register">Log out</a>
+                </Authorized>
+            </AuthorizeView>      
         </div>
-
         <article class="content px-4">
             @Body
         </article>
     </main>
 </div>
+
+<Syncfusion.Blazor.Popups.SfDialogProvider/>
+
+@code{
+    async Task LogoutClicked(){
+        var logoutModel = new UserSession();
+        var customAuthStateProvider = (CustomAuthenticationStateProvider)AuthStateProvider;
+        await customAuthStateProvider.UpdateAuthenticationState(logoutModel);
+        NavManager.NavigateTo("/", forceLoad: true);
+    }
+}

@@ -2,8 +2,11 @@ using EMS.ServerLibrary.Data;
 using EMS.ServerLibrary.Helpers;
 using EMS.ServerLibrary.Repositories.Contracts;
 using EMS.ServerLibrary.Repositories.Implementations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +20,34 @@ builder.Services.AddDbContext<AppDbContext>(options => { options.UseSqlServer(bu
 
 
 builder.Services.Configure<JwtSection>(builder.Configuration.GetSection("JwtSection"));
+var jwtOptions = builder.Configuration.GetSection(nameof(JwtSection)).Get<JwtSection>();
 builder.Services.AddScoped<IUserAccount, UserAccountRepository>();
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowBlazorWasm",
+		builder => builder.WithOrigins("http://localhost:5037", "https://localhost:7199")
+		.AllowAnyMethod()
+		.AllowAnyHeader()
+		.AllowCredentials());
+});
+
+builder.Services.AddAuthentication(options =>
+{
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateIssuerSigningKey = true,
+		ValidateLifetime = true,
+		ValidIssuer = jwtOptions!.Issuer,
+		ValidAudience = jwtOptions!.Audience,
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Key)),
+	};
+});
 
 var app = builder.Build();
 
@@ -29,7 +59,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AllowBlazorWasm");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -1,5 +1,6 @@
 ﻿using EMS.BaseLibrary.DTOs;
 using EMS.ServerLibrary.Repositories.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace EMS.Server.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[AllowAnonymous]
 	public class AuthenticationController(IUserAccount accountInterface) : ControllerBase
 	{
 		[HttpPost("register")]

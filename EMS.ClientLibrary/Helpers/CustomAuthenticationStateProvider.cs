@@ -14,7 +14,7 @@ namespace EMS.ClientLibrary.Helpers
 			if (string.IsNullOrEmpty(stringToken)) return await Task.FromResult(new AuthenticationState(anonymous));
 			var deserialzeToken = Serializations.DeserializeJsonString<UserSession>(stringToken);
 			if (deserialzeToken == null) return await Task.FromResult(new AuthenticationState(anonymous));
-			var getUserClaims = DecryptToken(deserialzeToken);
+			var getUserClaims = DecryptToken(deserialzeToken.Token);
 			if (getUserClaims == null) return await Task.FromResult(new AuthenticationState(anonymous));
 
 			var claimsPrincipal = SetClaimPrincipal(getUserClaims);

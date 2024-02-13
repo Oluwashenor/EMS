@@ -11,7 +11,7 @@ namespace EMS.BaseLibrary.DTOs
 	{
 		[Required]
 		[MinLength(5)]
-		[MaxLength(5)]
+		[MaxLength(25)]
 		public string? FullName {  get; set; }
 
 		[DataType(DataType.Password)]

@@ -8,3 +8,14 @@
 @using Microsoft.JSInterop
 @using EMS.Client
 @using EMS.Client.Layout
+
+@using BaseLibrary.DTOs
+@using ClientLibrary.Helpers
+@using Microsoft.AspNetCore.Components.Authorization
+@using EMS.ClientLibrary.Services.Contracts
+
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IUserAccountService accountService
+@inject NavigationManager NavManager
+
+@using Syncfusion.Blazor.Popups

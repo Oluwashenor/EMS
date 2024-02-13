@@ -32,10 +32,13 @@ namespace EMS.ClientLibrary.Services.Implementation
 			return result;
 		}
 
-		Task<LoginResponse> IUserAccountService.RefreshTokenAsync(RefreshToken token)
+		public async Task<LoginResponse> RefreshTokenAsync(RefreshToken token)
 		{
-			throw new NotImplementedException();
-		}
+            var httpClient = getHttpClient.GetPublicHttpClient();
+            var result = await httpClient.PostAsJsonAsync($"{AuthUrl}/refresh-token", token);
+            if (!result.IsSuccessStatusCode) return new LoginResponse(false, "Error Occurred");
+            return await result.Content.ReadFromJsonAsync<LoginResponse>();
+        }
 
 
 	}
