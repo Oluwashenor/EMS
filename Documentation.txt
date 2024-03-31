@@ -1,0 +1,1 @@
+In order to run migration, Set the Server as the start up project then run the add migration commmand from the ServerBase nonsense

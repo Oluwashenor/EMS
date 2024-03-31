@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EMS.BaseLibrary.Entities
 {
-	public class GeneralDepartment : BaseEntity
-	{
-		//One to many relationships with department
-		public List<Department>? Departments { get; set; }
-	}
+    public class Country : BaseEntity
+    {
+        //One to many relationship with City
+        public List<City>? Cities { get; set; }
+    }
 }

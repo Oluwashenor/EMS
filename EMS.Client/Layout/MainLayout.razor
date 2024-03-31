@@ -1,6 +1,7 @@
-﻿@using EMS.BaseLibrary.DTOs
-@using EMS.ClientLibrary.Helpers
+﻿@using EMS.Client.Pages.OtherPages
+@using Microsoft.AspNetCore.Authorization
 @inherits LayoutComponentBase
+@attribute [Authorize]
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -8,11 +9,7 @@
 
     <main>
         <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    <a class="btn btn-none text-danger" @onclick="LogoutClicked" href="identity/account/register">Log out</a>
-                </Authorized>
-            </AuthorizeView>      
+            <ProfileDropDown></ProfileDropDown>
         </div>
         <article class="content px-4">
             @Body

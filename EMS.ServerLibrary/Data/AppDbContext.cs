@@ -1,10 +1,5 @@
 ﻿using EMS.BaseLibrary.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EMS.ServerLibrary.Data
 {
@@ -19,7 +14,12 @@ namespace EMS.ServerLibrary.Data
 		public DbSet<SystemRole> SystemRoles  { get; set; }
 		public DbSet<UserRole> UserRoles  { get; set; }
 		public DbSet<RefreshTokenInfo> RefreshTokenInfos  { get; set; }
-
-
-	}
+        public DbSet<Vacation> Vacations { get; set; }
+        public DbSet<VacationType> VacationTypes { get; set; }
+        public DbSet<Overtime> Overtimes { get; set; }
+        public DbSet<OvertimeType> OvertineTypes { get; set; }
+        public DbSet<Sanction> Sanctions { get; set; }
+        public DbSet<SanctionType> SanctionTypes { get; set; }
+        public DbSet<Doctor> Doctors { get; set; }
+    }
 }

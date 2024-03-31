@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using EMS.Client;
+using EMS.Client.ApplicationStates;
 using EMS.ClientLibrary.Helpers;
 using EMS.ClientLibrary.Services.Contracts;
 using EMS.ClientLibrary.Services.Implementation;
@@ -27,6 +28,8 @@ builder.Services.AddScoped<GetHttpClient>();
 builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
+
+builder.Services.AddScoped<DepartmentState>();
 
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<SfDialogService>();
