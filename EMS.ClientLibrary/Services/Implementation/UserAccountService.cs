@@ -1,4 +1,5 @@
 ﻿using EMS.BaseLibrary.DTOs;
+using EMS.BaseLibrary.Entities;
 using EMS.BaseLibrary.Responses;
 using EMS.ClientLibrary.Helpers;
 using EMS.ClientLibrary.Services.Contracts;
@@ -40,6 +41,35 @@ namespace EMS.ClientLibrary.Services.Implementation
             return await result.Content.ReadFromJsonAsync<LoginResponse>();
         }
 
+		public async Task<List<ManageUser>> GetUsers()
+		{
+			var httpClient = await getHttpClient.GetPrivateHttpClient();
+			var result = await httpClient.GetFromJsonAsync<List<ManageUser>>($"{AuthUrl}/users");
+			return result!;
+		}
 
-	}
+        public async Task<GeneralResponse> UpdateUser(ManageUser user)
+        {
+            var httpClient = await getHttpClient.GetPrivateHttpClient();
+            var result = await httpClient.PutAsJsonAsync($"{AuthUrl}/users", user);
+			if (!result.IsSuccessStatusCode) return new GeneralResponse(false, "Error Occured");
+            return await result.Content.ReadFromJsonAsync<GeneralResponse>();
+        }
+
+		public async Task<List<SystemRole>> GetRoles()
+		{
+            var httpClient = await getHttpClient.GetPrivateHttpClient();
+            var result = await httpClient.GetFromJsonAsync<List<SystemRole>>($"{AuthUrl}/roles");
+            return result!;
+        }
+
+        public async Task<GeneralResponse> DeleteUser(int id)
+        {
+            var httpClient = await getHttpClient.GetPrivateHttpClient();
+            var result = await httpClient.DeleteAsync($"{AuthUrl}/delete-user/{id}");
+            if (!result.IsSuccessStatusCode) return new GeneralResponse(false, "Error Occured");
+            return await result.Content.ReadFromJsonAsync<GeneralResponse>();
+        }
+
+    }
 }

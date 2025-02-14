@@ -1,9 +1,11 @@
 using Blazored.LocalStorage;
+using EMS.BaseLibrary.Entities;
 using EMS.Client;
 using EMS.Client.ApplicationStates;
 using EMS.ClientLibrary.Helpers;
 using EMS.ClientLibrary.Services.Contracts;
 using EMS.ClientLibrary.Services.Implementation;
+using EMS.ServerLibrary.Repositories.Implementations;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -29,7 +31,15 @@ builder.Services.AddScoped<LocalStorageService>();
 builder.Services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 builder.Services.AddScoped<IUserAccountService, UserAccountService>();
 
-builder.Services.AddScoped<DepartmentState>();
+builder.Services.AddScoped<IGenericServiceInterface<GeneralDepartment>, GenericServiceImplementation<GeneralDepartment>>();
+builder.Services.AddScoped<IGenericServiceInterface<Department>, GenericServiceImplementation<Department>>();
+builder.Services.AddScoped<IGenericServiceInterface<Branch>, GenericServiceImplementation<Branch>>();
+builder.Services.AddScoped<IGenericServiceInterface<Country>, GenericServiceImplementation<Country>>();
+builder.Services.AddScoped<IGenericServiceInterface<City>, GenericServiceImplementation<City>>();
+builder.Services.AddScoped<IGenericServiceInterface<Town>, GenericServiceImplementation<Town>>();
+builder.Services.AddScoped<IGenericServiceInterface<Employee>, GenericServiceImplementation<Employee>>();
+
+builder.Services.AddScoped<AllState>();
 
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<SfDialogService>();

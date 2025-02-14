@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EMS.BaseLibrary.Entities
@@ -12,6 +13,7 @@ namespace EMS.BaseLibrary.Entities
         public int CountryId { get; set; }
 
         //One to Many relationship with town
+        [JsonIgnore]
         public List<Town>? Towns { get; set; }
     }
 }

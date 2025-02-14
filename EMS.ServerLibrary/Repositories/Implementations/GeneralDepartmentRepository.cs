@@ -23,7 +23,8 @@ namespace EMS.ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Insert(GeneralDepartment entity)
         {
-            if (!await CheckName(entity.Name)) return new GeneralResponse(false, "Department already added");
+            var checkIfNull = await CheckName(entity.Name);
+            if (!checkIfNull) return new GeneralResponse(false, "General Department already added");
             context.GeneralDepartments.Add(entity);
             await Commit();
             return Success();
@@ -45,7 +46,7 @@ namespace EMS.ServerLibrary.Repositories.Implementations
         private async Task<bool> CheckName(string name)
         {
             var item = await context.GeneralDepartments.FirstOrDefaultAsync(x=>x.Name!.ToLower().Equals(name.ToLower()));
-            return item is null;
+            return item is null ? true : false;
         }
     }
 }

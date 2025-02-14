@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace EMS.BaseLibrary.Entities
@@ -12,7 +13,8 @@ namespace EMS.BaseLibrary.Entities
 		public GeneralDepartment? GeneralDepartment { get; set; }
 		public int GeneralDepartmentId { get; set; }
 
-		//One to many relationship with branch
-		public List<Branch>? Branches { get; set; }
+        //One to many relationship with branch
+        [JsonIgnore]
+        public List<Branch>? Branches { get; set; }
 	}
 }

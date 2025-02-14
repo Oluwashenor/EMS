@@ -2,17 +2,17 @@
 @using EMS.Client.ApplicationStates;
 @implements IDisposable
 
-@if(allState.ShowGeneralDepartment)
+@if (allState.ShowCountry)
 {
     <div class="container mt-5">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4 class="float-start">General Department</h4>
+                        <h4 class="float-start">Country</h4>
                         <button class="btn btn-outline-success float-end" @onclick="OpenDialog">
                             <i class="bi bi-plus-circle-dotted"></i>
-                            Add Department
+                            Add Country
                         </button>
                     </div>
                     <div class="card-header" style="max-height:500px; overflow-x:hidden;overflow-y:scroll;">
@@ -22,15 +22,15 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Id</th>
-                                        <th scope="col">G Department</th>
+                                        <th scope="col">Name</th>
                                         <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if(GeneralDepartments is not null)
+                                    @if (Countries is not null)
                                     {
                                         int count = 1;
-                                        foreach (var item in GeneralDepartments)
+                                        foreach (var item in Countries)
                                         {
                                             <tr>
                                                 <th scope="row">@count</th>
@@ -53,76 +53,80 @@
     </div>
 }
 
-<GeneralDepartmentDialog @ref="generalDepartmentDialog" 
-    HandleSaveOperationEvent="HandleSaveOperationEvent"
-    GeneralDepartment="GeneralDepartment"/>
+<CountryDialog @ref="countryDialog"
+                  HandleSaveOperationEvent="HandleSaveOperationEvent"
+               Country="Country"
+                 />
 
-    <style>
-        .cursorStyle{
-            cursor:pointer;
-        }
-    </style>
+<style>
+    .cursorStyle {
+        cursor: pointer;
+    }
+</style>
 
 @code {
-    GeneralDepartmentDialog? generalDepartmentDialog;
-    GeneralDepartment GeneralDepartment = new();
+    CountryDialog? countryDialog;
+    Country Country = new();
     public string Title { get; set; } = "Add";
-    public List<GeneralDepartment> GeneralDepartments { get; set; } = new();
+    public List<Country> Countries { get; set; } = new();
 
     protected async override Task OnInitializedAsync()
     {
-        await GetGeneralDepartments();
+        await GetCountries();
         allState.Action += StateHasChanged;
     }
 
-    private async Task GetGeneralDepartments()
+    private async Task GetCountries()
     {
-        GeneralDepartments = await generalDepartmentService.GetAll(Constants.GeneralDepartmentBaseUrl);
+        Countries = await countryService.GetAll(Constants.CountryBaseUrl);
     }
 
-    public void Dispose(){
+
+    public void Dispose()
+    {
         allState.Action -= StateHasChanged;
     }
 
-    void OpenDialog(){
-        generalDepartmentDialog?.OpenDialog();
+    void OpenDialog()
+    {
+        countryDialog?.OpenDialog();
     }
 
-    private async Task HandleSaveOperationEvent(GeneralDepartment generalDepartment)
+    private async Task HandleSaveOperationEvent(Country country)
     {
         bool successCheck = false;
-        if (generalDepartment.Id > 0)
+        if (country.Id > 0)
         {
-            var result = await generalDepartmentService.Update(generalDepartment, Constants.GeneralDepartmentBaseUrl);
+            var result = await countryService.Update(country, Constants.CountryBaseUrl);
             successCheck = await DisplayMessage(result.Flag, result.Message);
         }
         else
         {
-            var result = await generalDepartmentService.Insert(generalDepartment, Constants.GeneralDepartmentBaseUrl);
+            var result = await countryService.Insert(country, Constants.CountryBaseUrl);
             successCheck = await DisplayMessage(result.Flag, result.Message);
         }
         if (successCheck)
         {
-            GeneralDepartment = new();
-            await GetGeneralDepartments();
-            generalDepartmentDialog?.ChangeTitle("Add");
+            Country = new();
+            await GetCountries();
+            countryDialog?.ChangeTitle("Add");
         }
     }
 
-    private void EditClicked(GeneralDepartment dep)
+    private void EditClicked(Country country)
     {
-        generalDepartmentDialog?.ChangeTitle("Update");
-        GeneralDepartment = dep;
+        countryDialog?.ChangeTitle("Update");
+        Country = country;
         OpenDialog();
     }
 
-    private async Task DeleteClicked(GeneralDepartment dep)
+    private async Task DeleteClicked(Country country)
     {
-        bool confirm = await dialogService.ConfirmAsync($"Are you sure you want to delete {dep.Name} ?", "Confirm Delete");
+        bool confirm = await dialogService.ConfirmAsync($"Are you sure you want to delete {country.Name} ?", "Confirm Delete");
         if (!confirm) return;
-        var response = await generalDepartmentService.DeleteById(dep.Id, Constants.GeneralDepartmentBaseUrl);
+        var response = await countryService.DeleteById(country.Id, Constants.CountryBaseUrl);
         if (await DisplayMessage(response.Flag, response.Message))
-            await GetGeneralDepartments();
+            await GetCountries();
     }
 
     private async Task<bool> DisplayMessage(bool flag, string message)

@@ -17,7 +17,7 @@ namespace EMS.ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public async Task<List<Department>> GetAll() => await context.Departments.ToListAsync();
+        public async Task<List<Department>> GetAll() => await context.Departments.AsNoTracking().Include(gd => gd.GeneralDepartment).ToListAsync();
 
         public async Task<Department> GetById(int id) => await context.Departments.FindAsync(id);
 
@@ -34,6 +34,7 @@ namespace EMS.ServerLibrary.Repositories.Implementations
             var dep = await context.Departments.FindAsync(entity.Id);
             if (dep is null) return NotFound();
             dep.Name = entity.Name;
+            dep.GeneralDepartmentId = entity.GeneralDepartmentId;
             await Commit();
             return Success();
         }

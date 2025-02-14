@@ -17,7 +17,9 @@ namespace EMS.ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public async Task<List<Branch>> GetAll() => await context.Branches.ToListAsync();
+        public async Task<List<Branch>> GetAll() => await context.Branches
+            .AsNoTracking()
+            .Include(d=>d.Department).ToListAsync();
 
         public async Task<Branch> GetById(int id) => await context.Branches.FindAsync(id);
 
@@ -31,9 +33,10 @@ namespace EMS.ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Update(Branch entity)
         {
-            var dep = await context.Branches.FindAsync(entity.Id);
-            if (dep is null) return NotFound();
-            dep.Name = entity.Name;
+            var branch = await context.Branches.FindAsync(entity.Id);
+            if (branch is null) return NotFound();
+            branch.Name = entity.Name;
+            branch.DepartmentId = entity.DepartmentId;
             await Commit();
             return Success();
         }

@@ -35,5 +35,27 @@ namespace EMS.Server.Controllers
 			return Ok(result);
 		}
 
+		[HttpGet("users")]
+		public async Task<IActionResult> GetUsersAsync()
+		{
+			var users = await accountInterface.GetUsers();
+			if (users == null) return NotFound();
+			return Ok(users);
+		}
+
+		[HttpPut("update-user")]
+		public async Task<IActionResult> UpdateUser(ManageUser manageUser)
+		{
+			var result = await accountInterface.UpdateUser(manageUser);
+			return Ok(result);
+		}
+
+		[HttpGet("roles")]
+		public async Task<IActionResult> GetRoles()
+		{
+			var roles = await accountInterface.GetRoles();
+			if(roles ==  null) return NotFound();
+			return Ok(roles);
+		}
 	}
 }

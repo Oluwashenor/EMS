@@ -17,7 +17,9 @@ namespace EMS.ServerLibrary.Repositories.Implementations
             return Success();
         }
 
-        public async Task<List<City>> GetAll() => await context.Cities.ToListAsync();
+        public async Task<List<City>> GetAll() => await context.Cities.AsNoTracking()
+            .Include(c=>c.Country)
+            .ToListAsync();
 
         public async Task<City> GetById(int id) => await context.Cities.FindAsync(id);
 
@@ -31,9 +33,10 @@ namespace EMS.ServerLibrary.Repositories.Implementations
 
         public async Task<GeneralResponse> Update(City entity)
         {
-            var dep = await context.Cities.FindAsync(entity.Id);
-            if (dep is null) return NotFound();
-            dep.Name = entity.Name;
+            var city = await context.Cities.FindAsync(entity.Id);
+            if (city is null) return NotFound();
+            city.Name = entity.Name;
+            city.CountryId = entity.CountryId;
             await Commit();
             return Success();
         }
